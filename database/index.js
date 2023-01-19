@@ -14,7 +14,7 @@ repo.watchers_count ------ filtering, maybe | NUM
 
 // By default, Mongoose adds an _id property to your schemas.
 let repoSchema = mongoose.Schema({
-  userId: Number,
+  userId: { type: Number, unqiue: true },
   fullName: String,
   repoId: Number,
   pic: String,
@@ -25,10 +25,46 @@ let repoSchema = mongoose.Schema({
 
 let Repo = mongoose.model('Repo', repoSchema);
 
-let save = (/* TODO */) => {
+let save = (repos) => {
   // TODO: Your code here
   // This function should save a repo or repos to
   // the MongoDB
+
+  // ========= SOLUTION VID IDEAS ================
+  // it is async, therefore, return a Promise...
+
+  // Repo has a create method - creates an array of doc (repo) objs
+
+  console.log('repos in database/index.js: ', repos)
+
+  let mappedRepos = repos.map(repo => {
+    return {
+      userId: repo.owner.id,
+      fullName: repo.full_name,
+      repoId: repo.id,
+      pic: repo.owner.avatar_url,
+      link: repo.html_url,
+      forks: repo.forks_count,
+      watchers: repo.watchers_count
+    };
+  })
+
+  return Repo.create(mappedRepos);
+
+  // or, you can return a Promise for all the repos, mapping each new Repo & saving it
+
+  // ================= PRE-VID TRY =================
+  // will get an array of repo objects to deal with
+  // create a 'newRepo' doc for each repo obj that does not already exist
+
+  // repos.forEach((repo, userId) => {
+    // should I overwite _id with the userId? for uniqueness?
+    // const newRepo = new Repo({
+  // });
+
+  //   newRepo.save()
+
+  // })
 
 }
 
