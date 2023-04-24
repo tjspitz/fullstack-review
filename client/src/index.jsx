@@ -5,12 +5,20 @@ import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
 
 const App = () => {
-
   const [repos, setRepos] = useState([]);
 
   const search = (term) => {
     console.log(`${term} was searched`);
-  }
+
+    $.ajax({
+      type: 'POST',
+      url: 'http://localhost:1128/repos',
+      data: { term },
+      dataType: 'application/json',
+      success: (data) => console.log('client POST success: ', data),
+      error: (err) => console.error(err)
+    });
+  };
 
   return (
     <div>
@@ -19,6 +27,6 @@ const App = () => {
       <Search onSearch={search}/>
     </div>
   );
-}
+};
 
 ReactDOM.render(<App />, document.getElementById('app'));
