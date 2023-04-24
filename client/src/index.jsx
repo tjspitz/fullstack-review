@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
+// import axios from 'axios';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
 
@@ -10,14 +11,21 @@ const App = () => {
   const search = (term) => {
     console.log(`${term} was searched`);
 
+    const url = 'http://localhost:1128/repos';
+
     $.ajax({
       type: 'POST',
-      url: 'http://localhost:1128/repos',
-      data: { term },
-      dataType: 'application/json',
+      url,
+      data: JSON.stringify({ term }),
+      contentType: 'application/json',
       success: (data) => console.log('client POST success: ', data),
       error: (err) => console.error(err)
     });
+
+    // Oh hey axios...
+    // axios.post(url, { term })
+    //   .then((data) => console.log('client POST success: ', data))
+    //   .catch((err) => console.error(err));
   };
 
   return (

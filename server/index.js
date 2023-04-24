@@ -1,22 +1,41 @@
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
+const path = require('path');
+const { getReposByUsername } = require('../helpers/github.js');
+const { save } = require('../database');
 
-// TODO - your code here!
-// Set up static file service for files in the `client/dist` directory.
-// Webpack is configured to generate files in that directory and
-// this server must serve those files when requested.
-app.use(express.static('client/dist'));
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.post('/repos', function (req, res) {
   // TODO - your code here!
   // This route should take the github username provided
   // and get the repo information from the github API, then
   // save the repo information in the database
-  console.log('server POST req: ', req.body);
-  res.sendStatus(200); // TEMP
+  getReposByUsername(req.body.term)
+    .then((repos) => {
+      console.log('POST .then: ', repos);
+      const userRepos = repos.map((repo) => {
+        return ({
+          ownerId: repo.owner.id,
+          profileUrl: repo.owner.html_url,
+          avatarUrl: repo.owner.avatar_url,
+          repoId: repo.id,
+          fullName: repo.full_name,
+          repoUrl: repo.html_url,
+          forks: repo.forks,
+          stars: repo.stargazers_count,
+          watched: repo.watchers_count
+        });
+      });
+      save(userRepos);
+    })
+    .then(() => res.sendStatus(201))
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
 });
 
 app.get('/repos', function (req, res) {

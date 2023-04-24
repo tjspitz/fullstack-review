@@ -16,10 +16,13 @@ const repoSchema = mongoose.Schema({
 // eslint-disable-next-line no-unused-vars
 const Repo = mongoose.model('Repo', repoSchema);
 
-const save = (/* TODO */) => {
+const save = (allRepos) => {
   // TODO: Your code here
   // This function should save a repo or repos to
   // the MongoDB
+  Repo.create(...allRepos)
+    .then(() => {})
+    .catch((err) => err);
 };
 
 module.exports.save = save;
