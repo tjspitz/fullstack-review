@@ -5,7 +5,10 @@ const repoSchema = mongoose.Schema({
   ownerId: Number, // overall owner's ID --> repo.owner.id
   profileUrl: String, // overall profile url -->  repo.owner.html_url
   avatarUrl: String, // profile pic --> repo.owner.avatar_url
-  repoId: Number, // specific repo ID --> repo.id
+  repoId: { // specific repo ID --> repo.id
+    type: Number,
+    unique: true
+  },
   fullName: String, // username/repo-name --> repo.full_name
   repoUrl: String, // the repo's url --> repo.html_url
   forks: Number, // forked # times (filtering) --> repo.forks
@@ -17,9 +20,6 @@ const repoSchema = mongoose.Schema({
 const Repo = mongoose.model('Repo', repoSchema);
 
 const save = (allRepos) => {
-  // TODO: Your code here
-  // This function should save a repo or repos to
-  // the MongoDB
   return Repo.create(...allRepos);
 };
 

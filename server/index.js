@@ -9,14 +9,9 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 app.use(express.json());
 
 app.post('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should take the github username provided
-  // and get the repo information from the github API, then
-  // save the repo information in the database
   getReposByUsername(req.body.term)
-    .then((repos) => {
-      console.log('POST .then: ', repos);
-      const userRepos = repos.map((repo) => ({
+    .then(({ data }) => {
+      const repos = data.map((repo) => ({
         ownerId: repo.owner.id,
         profileUrl: repo.owner.html_url,
         avatarUrl: repo.owner.avatar_url,
@@ -27,7 +22,7 @@ app.post('/repos', function (req, res) {
         stars: repo.stargazers_count,
         watched: repo.watchers_count
       }));
-      save(userRepos);
+      save(repos);
     })
     .then(() => res.sendStatus(201))
     .catch((err) => {

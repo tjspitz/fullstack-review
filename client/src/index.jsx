@@ -22,7 +22,7 @@ const App = () => {
       error: (err) => console.error(err)
     });
 
-    // Oh hey
+    // Oh hey axios
     // axios.post(url, { term })
     //   .then((data) => console.log('client POST success: ', data))
     //   .catch((err) => console.error(err));
