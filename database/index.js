@@ -20,9 +20,7 @@ const save = (allRepos) => {
   // TODO: Your code here
   // This function should save a repo or repos to
   // the MongoDB
-  Repo.create(...allRepos)
-    .then(() => {})
-    .catch((err) => err);
+  return Repo.create(...allRepos);
 };
 
 module.exports.save = save;

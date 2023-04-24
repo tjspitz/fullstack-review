@@ -16,19 +16,17 @@ app.post('/repos', function (req, res) {
   getReposByUsername(req.body.term)
     .then((repos) => {
       console.log('POST .then: ', repos);
-      const userRepos = repos.map((repo) => {
-        return ({
-          ownerId: repo.owner.id,
-          profileUrl: repo.owner.html_url,
-          avatarUrl: repo.owner.avatar_url,
-          repoId: repo.id,
-          fullName: repo.full_name,
-          repoUrl: repo.html_url,
-          forks: repo.forks,
-          stars: repo.stargazers_count,
-          watched: repo.watchers_count
-        });
-      });
+      const userRepos = repos.map((repo) => ({
+        ownerId: repo.owner.id,
+        profileUrl: repo.owner.html_url,
+        avatarUrl: repo.owner.avatar_url,
+        repoId: repo.id,
+        fullName: repo.full_name,
+        repoUrl: repo.html_url,
+        forks: repo.forks,
+        stars: repo.stargazers_count,
+        watched: repo.watchers_count
+      }));
       save(userRepos);
     })
     .then(() => res.sendStatus(201))

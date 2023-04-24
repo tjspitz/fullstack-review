@@ -8,7 +8,6 @@ const getReposByUsername = (gitHandle) => {
   // The options object has been provided to help you out,
   // but you'll have to fill in the URL
   const options = {
-    method: 'get',
     url: `https://api.github.com/users/${gitHandle}/repos`,
     headers: {
       'User-Agent': 'request',
@@ -16,7 +15,7 @@ const getReposByUsername = (gitHandle) => {
     }
   };
 
-  axios.get(options)
+  return axios.get(options)
     .then((data) => {
       console.log('github.js success: ', data);
       return data;
