@@ -6,8 +6,8 @@ const getReposByUsername = (gitHandle) => {
     url: `https://api.github.com/users/${gitHandle}/repos`,
     headers: {
       'User-Agent': 'request',
-      Authorization: `token ${config.TOKEN}`
-    }
+      Authorization: `token ${config.TOKEN}`,
+    },
   };
 
   return axios.get(options.url, options)
