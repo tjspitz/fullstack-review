@@ -21,11 +21,12 @@ const Repo = mongoose.model('Repo', repoSchema);
 const save = (allRepos) => Repo.create(...allRepos);
 
 const get25 = (filter) => {
-  const sortMethod = {};
-  sortMethod[filter] = -1;
+  // SOME DAY
+  // const sortMethod = {};
+  // sortMethod[filter] = -1;
 
   return Repo.find({})
-    .sort(sortMethod)
+    .sort('-stars')
     .limit(25)
     .exec();
 };

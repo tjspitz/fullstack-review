@@ -20,11 +20,11 @@ app.post('/repos', function (req, res) {
         repoUrl: repo.html_url,
         forks: repo.forks,
         stars: repo.stargazers_count,
-        watched: repo.watchers_count
+        watched: repo.watchers_count,
       }));
       save(repos);
     })
-    .then(({ data }) => res.status(201).send(data))
+    .then(() => res.sendStatus(201))
     .catch((err) => res.status(500).send(err));
 });
 

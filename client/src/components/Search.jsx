@@ -11,7 +11,6 @@ const Search = ({ onSearch, refresh, setRefresh }) => {
   const search = (e) => {
     e.preventDefault();
     onSearch(term);
-    // setRefresh(!refresh);
   };
 
   return (

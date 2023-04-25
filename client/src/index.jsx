@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
-// import axios from 'axios';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
 
@@ -14,13 +13,12 @@ const App = () => {
   useEffect(() => {
     getTop25()
       .then((repoList) => {
-        console.log('Fetched up to 25 repos: ', repoList);
         setRepos(repoList);
       })
       .catch((err) => console.error(err));
   }, [refresh]);
 
-  const getTop25 = (filter = 'stars') => {
+  const getTop25 = (filter = 'stars') => { // not using 'filter' right now
     return new Promise((resolve, reject) => {
       $.ajax({
         type: 'GET',
@@ -39,7 +37,9 @@ const App = () => {
       url,
       data: JSON.stringify({ term }),
       contentType: 'application/json',
-      success: (data) => console.log(`POST succeeded. (${data})`),
+      success: (status) => {
+        setRefresh(!refresh);
+      },
       error: (err) => console.error(err),
     });
 
@@ -53,7 +53,7 @@ const App = () => {
     <div>
       <h1>Github Fetcher</h1>
       <Search onSearch={search} refresh={refresh} setRefresh={setRefresh} />
-      <RepoList repos={repos} />
+      <RepoList repos={repos} getTop25={getTop25} />
     </div>
   );
 };
