@@ -7,20 +7,28 @@ const repoSchema = mongoose.Schema({
   avatarUrl: String, // profile pic --> repo.owner.avatar_url
   repoId: { // specific repo ID --> repo.id
     type: Number,
-    unique: true
+    unique: true,
   },
   fullName: String, // username/repo-name --> repo.full_name
   repoUrl: String, // the repo's url --> repo.html_url
   forks: Number, // forked # times (filtering) --> repo.forks
   stars: Number, // starred # times (filtering) --> repo.stargazers_count
-  watched: Number // watched # times (filtering) --> repo.watchers_count
+  watched: Number, // watched # times (filtering) --> repo.watchers_count
 });
 
-// eslint-disable-next-line no-unused-vars
 const Repo = mongoose.model('Repo', repoSchema);
 
-const save = (allRepos) => {
-  return Repo.create(...allRepos);
+const save = (allRepos) => Repo.create(...allRepos);
+
+const get25 = (filter) => {
+  const sortMethod = {};
+  sortMethod[filter] = -1;
+
+  return Repo.find({})
+    .sort(sortMethod)
+    .limit(25)
+    .exec();
 };
 
 module.exports.save = save;
+module.exports.get25 = get25;

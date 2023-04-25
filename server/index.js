@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const { getReposByUsername } = require('../helpers/github.js');
-const { save } = require('../database');
+const { save, get25 } = require('../database');
 
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
@@ -24,16 +24,18 @@ app.post('/repos', function (req, res) {
       }));
       save(repos);
     })
-    .then(() => res.sendStatus(201))
-    .catch((err) => {
-      console.error(err);
-      res.sendStatus(500);
-    });
+    .then(({ data }) => res.status(201).send(data))
+    .catch((err) => res.status(500).send(err));
 });
 
 app.get('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
+  get25(req.body.filter)
+    .then((data) => {
+      res.status(200).send(data);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
 });
 
 const port = 1128;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Search = ({ onSearch }) => {
+const Search = ({ onSearch, refresh, setRefresh }) => {
   const [term, setTerm] = useState('');
 
   const onChange = (e) => {
@@ -11,6 +11,7 @@ const Search = ({ onSearch }) => {
   const search = (e) => {
     e.preventDefault();
     onSearch(term);
+    // setRefresh(!refresh);
   };
 
   return (
