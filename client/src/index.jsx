@@ -8,17 +8,26 @@ const url = 'http://localhost:1128/repos';
 
 const App = () => {
   const [repos, setRepos] = useState([]);
+  const [users, setUsers] = useState({});
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     getTop25()
       .then((repoList) => {
         setRepos(repoList);
+        setUsers(makeUserList(repoList));
       })
       .catch((err) => console.error(err));
   }, [refresh]);
 
-  const getTop25 = (filter = 'stars') => { // not using 'filter' right now
+  const makeUserList = (allRepos) => {
+    console.log(allRepos);
+    const users = allRepos.map((repo) => repo.fullName.split('/')[0]);
+    return new Set(users);
+  };
+
+  // not using 'filter' right now
+  const getTop25 = (filter = 'stars') => {
     return new Promise((resolve, reject) => {
       $.ajax({
         type: 'GET',
@@ -32,6 +41,10 @@ const App = () => {
   };
 
   const search = (term) => {
+    if (users.has(term)) {
+      alert('That user\'s repos have already been added!');
+      return;
+    };
     $.ajax({
       type: 'POST',
       url,
