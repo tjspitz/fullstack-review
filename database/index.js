@@ -28,7 +28,9 @@ const get25 = (filter) => {
   return Repo.find({})
     .sort('-stars')
     .limit(25)
-    .exec();
+    .exec()
+    .then((data) => data)
+    .catch((err) => err);
 };
 
 module.exports.save = save;
