@@ -1,55 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
 
-import axios from 'axios';
-
-
 const App = () => {
-
   const [repos, setRepos] = useState([]);
+  const [users, setUsers] = useState({});
+  const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    getTop25()
+      .then((repoList) => {
+        setRepos(repoList);
+        setUsers(makeUserList(repoList));
+      })
+      .catch((err) => console.error(err));
+  }, [refresh]);
+
+  const makeUserList = (allRepos) => {
+    console.log(allRepos);
+    const users = allRepos.map((repo) => repo.fullName.split('/')[0]);
+    return new Set(users);
+  };
+
+  // not using 'filter' right now
+  const getTop25 = (filter = 'stars') => {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        type: 'GET',
+        url,
+        data: JSON.stringify({ filter }),
+        dataType: 'json',
+        success: (data) => resolve(data),
+        error: (err) => reject(err),
+      });
+    });
+  };
 
   const search = (term) => {
-
-    axios.post('/repos', {
-      searchTerm: term
-    })
-    .then((res) => {
-    //   return axios.get('/repos')
-      return res
-      console.log('axios post sent')
-    })
-    // .then((reponse) => {
-    //   setRepos(response.data)
-    // })
-    .catch((error) => { console.log('axios post ERROR: ', error) })
-
-    // $.ajax({
-    //   type: 'POST',
-    //   url: 'http://localhost:1128/repos',
-    //   data: {searchTerm: term }, // <--- hrm?
-    //   dataType: 'application/json',
-    //   success: (req) => {
-    //     console.log('Success! AJAX is a pain!', req);
-    //   },
-    //   error: (jqXHR, textStatus) => {
-    //     let res = $.parseJSON(jqXHR.responseText);
-    //     console.log('Booo, an error:', res);
-    //   }
-    // });
-
-    // console.log(`${term} was searched`);
-  };
+    console.log(`${term} was searched`);
+  }
 
   return (
     <div>
       <h1>Github Fetcher</h1>
-      <RepoList repos={repos} />
-      <Search onSearch={search} />
+      <Search onSearch={search} refresh={refresh} setRefresh={setRefresh} />
+      <RepoList repos={repos} getTop25={getTop25} />
     </div>
   );
-}
+};
 
 ReactDOM.render(<App />, document.getElementById('app'));

@@ -1,58 +1,45 @@
 const express = require('express');
-const morgan = require('morgan');
-const path = require('path');
 const app = express();
-const db = require('../database')
-const gitHelp = require('../helpers/github.js');
-
-app.use(morgan('dev'))
-app.use(express.json());
+const path = require('path');
+const { getReposByUsername } = require('../helpers/github.js');
+const { save, get25 } = require('../database');
 
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
+app.use(express.json());
+
 app.post('/repos', function (req, res) {
-
-  // ================= SOLUTION VID IDEAS =================
-
-  // gitHelp.getReposByUsername(req.body.searchTerm)
-    // db.save(data)
-    // .then( () => res.sendStatus(201))
-    // .then((data) => db.save(data))
-
-  // ================= PRE-VID IDEAS =================
-
-  gitHelp.getReposByUsername(req.body.searchTerm)
-    .then(repos => {
-      // console.log('response in THEN of server/index.js: ', response)
-      db.save(repos.data)
-      console.log('\nSUCCES in server/index.js! ');
+  getReposByUsername(req.body.term)
+    .then(({ data }) => {
+      const repos = data.map((repo) => ({
+        ownerId: repo.owner.id,
+        profileUrl: repo.owner.html_url,
+        avatarUrl: repo.owner.avatar_url,
+        repoId: repo.id,
+        fullName: repo.full_name,
+        repoUrl: repo.html_url,
+        forks: repo.forks,
+        stars: repo.stargazers_count,
+        watched: repo.watchers_count,
+      }));
+      save(repos);
     })
-    .then(res => res)
-    .catch(err => console.log('\nERROR in server/index.js: ', err))
-
+    .then(() => res.sendStatus(201))
+    .catch((err) => res.status(500).send(err));
 });
 
 app.get('/repos', function (req, res) {
-
-// ================= SOLUTION VID IDEAS =================
-  // db.find({})
-  //   .sort('-forks')
-  //   .limit(25)
-  //   .exec()
-  //   .then((repos) => {
-  //     res.send(repos);
-  //   })
-  //   .catch((err) => {
-  //     console.log('Error querying mongoBD!');
-  //   })
-
-
-  console.log(`GET in server/index.js: ${req.body}`);
+  get25(req.body.filter)
+    .then((data) => {
+      res.status(200).send(data);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
 });
 
-let port = 1128;
+const port = 1128;
 
-app.listen(port, function() {
+app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
-
